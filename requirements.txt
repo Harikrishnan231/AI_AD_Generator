@@ -4,11 +4,9 @@ Pillow==10.2.0
 numpy==1.26.4
 duckduckgo-search==8.0.0
 google-generativeai==0.8.4
-TTS==0.22.0
-moviepy==1.0.3
 aiohttp==3.10.5
 aiofiles==24.1.0
 
-# Try adding ffmpeg and espeak (for moviepy)
-ffmpeg==5.1.2
-espeak-ng==1.51.0
+# Commented out packages not supported on Streamlit Cloud
+# TTS==0.22.0
+# moviepy==1.0.3
