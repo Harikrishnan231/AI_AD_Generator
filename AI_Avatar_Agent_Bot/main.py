@@ -205,6 +205,7 @@ def generate_final_video(user_video_path, images, audio_path, output_path="final
         overlay_clips.append(img_clip)
         start_time += image_duration
 
+    # 🚫 Replaces TextClip with PIL-based overlay
     text_chunks = split_script_into_chunks(final_message, total_audio_duration, chunk_duration=5)
     for chunk_text, start, duration in text_chunks:
         text_image = create_text_image(chunk_text, size=(700, 150), font_size=30)
