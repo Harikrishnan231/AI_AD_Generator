@@ -8,3 +8,4 @@ aiohttp==3.10.5
 aiofiles==24.1.0
 gTTS==2.3.2
 googletrans==4.0.0rc1
+moviepy==1.0.3
