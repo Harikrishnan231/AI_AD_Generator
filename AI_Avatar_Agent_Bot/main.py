@@ -29,7 +29,7 @@ def cleanup_temp_folder(delay_seconds=600):
     threading.Timer(delay_seconds, delete_folder).start()
 
 # === GEMINI API SETUP === #
-genai.configure(api_key="AIzaSyCagnPGqPk2pPzyvkaA6DYxt1ReIVN2tOE")
+genai.configure(api_key=st.secrets["gcp"]["gemini_api_key"])
 
 # === AGENT FUNCTIONS === #
 def generate_text(prompt, model="gemini-1.5-flash"):
