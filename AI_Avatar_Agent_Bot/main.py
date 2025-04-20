@@ -290,8 +290,17 @@ if user_images:
             st.image(tmp_img.name, caption=f"Uploaded Image {idx+1}", use_column_width=True)
 
 # === VIDEO PATH (hardcoded or uploaded) === #
-user_video_path = r"AI_Avatar_Agent_Bot\uploads\WIN_20250418_10_53_30_Pro.mp4"
-if os.path.exists(user_video_path) and (selected_images or auto_selected_images) and audio_path:
+uploaded_video = st.file_uploader("📹 Upload your base video (mp4)", type=["mp4"])
+user_video_path = None
+
+if uploaded_video:
+    with NamedTemporaryFile(delete=False, dir=TEMP_DIR, suffix=".mp4") as tmp_vid:
+        tmp_vid.write(uploaded_video.read())
+        user_video_path = tmp_vid.name
+
+all_images = selected_images + auto_selected_images
+if user_video_path and all_images and audio_path:
+
     if st.button("🎬 Generate Final Video"):
         with st.spinner("Creating final video..."):
             images_to_use = selected_images + auto_selected_images
