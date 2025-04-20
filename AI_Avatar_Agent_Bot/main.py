@@ -2,6 +2,8 @@ import os
 import streamlit as st
 import requests
 import shutil
+import pyttsx3
+import time
 from PIL import Image, ImageDraw, ImageFont
 from io import BytesIO
 import numpy as np
@@ -47,7 +49,7 @@ def script_writer(conclusion):
     return generate_text(f"Write a casual, naturally flowing 200-word paragraph based on this info: {conclusion}")
 
 def stylish_writer(script):
-    return generate_text(f"Make this more rhythmic and natural for speech, with good punctuation and flow: {script}")
+    return generate_text(f"Make this more rhythmic and natural for speech, with good punctuation and flow so that pyttsx3 can give pass and speak like: {script}")
 
 def bias_checker(script):
     return generate_text(f"Is this biased or neutral? Summarize briefly: {script}")
@@ -83,10 +85,33 @@ def keyword_extractor(script):
     return keyword.strip().replace("\n", "")
 
 # === TEXT-TO-SPEECH FUNCTION === #
-def text_to_speech(text, language="en"):
-    tts = gTTS(text=text, lang=language, slow=False)
+
+
+def text_to_speech(text, language="en", gender="Male"):
+    engine = pyttsx3.init()
+    voices = engine.getProperty('voices')
+
+    # Try to match voice based on language and gender
+    selected_voice = None
+    for voice in voices:
+        if language in voice.id.lower() and gender.lower() in voice.name.lower():
+            selected_voice = voice.id
+            break
+
+    # Fallback if specific gender voice not found
+    if not selected_voice:
+        for voice in voices:
+            if gender.lower() in voice.name.lower():
+                selected_voice = voice.id
+                break
+
+    if selected_voice:
+        engine.setProperty('voice', selected_voice)
+
     audio_path = os.path.join(TEMP_DIR, "final_audio.mp3")
-    tts.save(audio_path)
+    engine.save_to_file(text, audio_path)
+    engine.runAndWait()
+    time.sleep(1)
     return audio_path
 
 # === AUDIO SEGMENTATION === #
@@ -218,6 +243,7 @@ selected_images = []
 
 st.title("🎙️ AI Spokesperson Video Generator")
 language_choice = st.selectbox("Choose Language:", ["en", "fr-fr", "pt-br"])
+
 
 styled_script = ""
 audio_path = ""
