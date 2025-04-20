@@ -8,7 +8,7 @@ import numpy as np
 from tempfile import NamedTemporaryFile
 from duckduckgo_search import DDGS
 import google.generativeai as genai
-from TTS.api import TTS
+from gtts import gTTS  # Using gTTS for text-to-speech synthesis
 from moviepy.editor import (
     VideoFileClip, ImageClip, concatenate_videoclips,
     AudioFileClip, CompositeVideoClip, TextClip, CompositeAudioClip
@@ -83,10 +83,10 @@ def keyword_extractor(script):
     return keyword.strip().replace("\n", "")
 
 # === TEXT-TO-SPEECH FUNCTION === #
-def text_to_speech(text, speaker, language="en"):
-    tts = TTS(model_name="tts_models/multilingual/multi-dataset/your_tts", gpu=False)
-    audio_path = os.path.join(TEMP_DIR, "final_audio.wav")
-    tts.tts_to_file(text=text, speaker=speaker, language=language, file_path=audio_path)
+def text_to_speech(text, language="en"):
+    tts = gTTS(text=text, lang=language, slow=False)
+    audio_path = os.path.join(TEMP_DIR, "final_audio.mp3")
+    tts.save(audio_path)
     return audio_path
 
 # === AUDIO SEGMENTATION === #
@@ -217,8 +217,6 @@ auto_selected_images = st.session_state.auto_selected_images
 selected_images = []
 
 st.title("🎙️ AI Spokesperson Video Generator")
-voice_choice = st.selectbox("Choose Voice:", ["Male (male-en-2)", "Female (female-en-5)"])
-speaker_id = "male-en-2" if "Male" in voice_choice else "female-en-5"
 language_choice = st.selectbox("Choose Language:", ["en", "fr-fr", "pt-br"])
 
 styled_script = ""
@@ -233,7 +231,7 @@ if mode:
     conclusion, script, styled_script, bias_summary, final_message = full_script_pipeline(topic)
     st.markdown("### 📜 Styled Script:")
     st.code(styled_script)
-    audio_path = text_to_speech(final_message, speaker=speaker_id, language=language_choice)
+    audio_path = text_to_speech(final_message, language=language_choice)
     st.audio(audio_path)
 
 st.markdown("### 🤖 Auto Image Selection from Script")
@@ -277,4 +275,3 @@ if os.path.exists(user_video_path) and (selected_images or auto_selected_images)
             cleanup_temp_folder(delay_seconds=600)
 else:
     st.info("📥 Please provide a valid video path and add/select images to proceed.")
-
